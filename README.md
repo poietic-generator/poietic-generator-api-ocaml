@@ -1,2 +1,5 @@
 # poietic-ml
-Alternative implementation of poietic generator in OCaml
+
+Alternative implementation of poietic generator (in OCaml)
+
+
