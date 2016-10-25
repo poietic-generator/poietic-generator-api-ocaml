@@ -1,0 +1,24 @@
+opam-version: "1.2"
+name: "poietic3"
+version: "0.1"
+maintainer: "Glenn Y. Rolland <glenux@glenux.net>"
+authors: "Glenn Y. Rolland <glenux@glenux.net>"
+homepage: "http://example.com"
+bug-reports: "http://example.com"
+license: "GIT"
+dev-repo: "http://example.com"
+build: [
+#  ["./configure" "--prefix=%{prefix}%"]
+  [make]
+]
+install: [make "install"]
+remove: ["ocamlfind" "remove" "poietic3"]
+depends: [
+  "ocamlfind" {build}
+  "core" {build}
+  "jingoo" {build}
+  "opium" {build}
+  "ounit" {build}
+  "websocket" {build}
+  "sqlite3" {build}
+]
