@@ -1,18 +1,18 @@
 # OCamlbuild tags file
 true: strict_sequence, annot, debug
-true: package(unix)
+true: package(opium), package(opium.unix), package(unix)
 
 # Include dirs
 <src/lib>: include
 <extern/*/lib>: include
 
 # Executable dirs
-<src/cli/*>: package(core), package(opium)
-<src/daemon/*>: package(core), package(opium)
+<src/cli/*>:  package(core)
+<src/daemon/*>: package(core)
 
 # Test dirs
 <test/*>: package(ppx_deriving.std), package(core), package(oUnit), package(str)
 
 # Executable
-# <server.{native,byte}>: package(cow.syntax), package(opium)
+# <*.{native,byte}>: package(cow.syntax), package(opium.unix)
 # <src/cli/*>: include, package(core), core(ANSITerminal), package(fileutils), package(dolog), package(unix), package(yojson)
