@@ -44,7 +44,7 @@ let parse_cmdline () =
   }
 
 let run_cmdline config =
-  Printf.printf "input_file: %s\n" config.input_file ;
+  Printf.printf "input_file: %s\n%!" config.input_file ;
   Poietic.ApiDaemon.run () ;
   ()
 

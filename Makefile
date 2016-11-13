@@ -34,6 +34,9 @@ build-test: $(TEST_NATIVE) $(TEST_ML) $(LIB_ML) $(EXTERN_ML)
 		fi ; \
 	done
 
+build-js: 
+	webpack --progress --colors src/js/entry.js public/bundle.js  --module-bind 'css=style!css'
+
 _build/%.native: %.ml $(TEST_ML) $(CLI_ML) $(LIB_ML) $(EXTERN_ML)
 	corebuild $(patsubst %.ml,%.native,$<)
 

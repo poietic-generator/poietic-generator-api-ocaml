@@ -1,6 +1,6 @@
 # OCamlbuild tags file
 true: strict_sequence, annot, debug
-true: package(opium), package(opium.unix), package(unix)
+true: package(opium), package(opium.unix), package(unix), package(graphics)
 
 # Include dirs
 <src/lib>: include

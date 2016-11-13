@@ -11,7 +11,12 @@ Alternative implementation of the poietic generator (in OCaml)
 
 
 Conception
------------------------
+----------
+
+
+Api Daemon : manages the game state
+XUI : X11 User Interface
+WUI : Web User Interface
 
 NOTE: One of the goals of this rewrite is to build a peer-to-peer version with no point of failure.
 
