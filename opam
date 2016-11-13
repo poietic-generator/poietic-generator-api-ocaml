@@ -1,5 +1,5 @@
 opam-version: "1.2"
-name: "poietic3"
+name: "p2poietic"
 version: "0.1"
 maintainer: "Glenn Y. Rolland <glenux@glenux.net>"
 authors: "Glenn Y. Rolland <glenux@glenux.net>"
@@ -12,7 +12,7 @@ build: [
   [make]
 ]
 install: [make "install"]
-remove: ["ocamlfind" "remove" "poietic3"]
+remove: ["ocamlfind" "remove" "p2poietic"]
 depends: [
   "ocamlfind" {build}
   "core" {build}
