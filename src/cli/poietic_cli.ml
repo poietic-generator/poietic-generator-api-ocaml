@@ -24,7 +24,6 @@ let parse_cmdline () =
   (* default values *)
   let conf_verbose    = ref false
   and conf_input_file = ref ""
-  and conf_help       = ref false
   in
 
   let usage = "Usage: " ^ Sys.argv.(0) ^ " [options...]\n\nOptions:\n"
