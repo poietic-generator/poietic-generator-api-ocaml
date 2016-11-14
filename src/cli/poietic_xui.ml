@@ -81,6 +81,12 @@ let run_cmdline config =
   print_endline ("Received body\n" ^ body) ;
 
   open_graph "" ;
+  resize_window 400 720 ;
+  set_color black ;
+  
+  fill_rect 0 0 400 720 ;
+  set_window_title "P2Poietic XUI" ;
+
   (* Fond *)
   set_color yellow;
   fill_rect 100 100 

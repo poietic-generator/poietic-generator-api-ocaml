@@ -8,6 +8,8 @@ type cli_action_t =
 type cli_config_t = {
   input_file: string ;
   verbose : bool ;
+  listen_address : string ;
+  listen_port    : int ;
 }
 
 type error =
@@ -44,12 +46,15 @@ let parse_cmdline () =
 
   (* Return a value *)
   { 
-    input_file = !conf_input_file ;
-    verbose    = !conf_verbose
+    input_file     = !conf_input_file ;
+    verbose        = !conf_verbose ;
+    listen_address = !conf_listen_address ;
+    listen_port    = !conf_listen_port
   }
 
 let run_cmdline config =
-  Printf.printf "input_file: %s\n" config.input_file ;
+  Printf.printf "%s: input_file: %s\n%!" __FILE__ config.input_file ;
+  while true do Unix.sleep 1 done ;
   ()
 
 let _ = 

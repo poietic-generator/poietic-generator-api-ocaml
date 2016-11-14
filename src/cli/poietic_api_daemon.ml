@@ -6,8 +6,10 @@ type cli_action_t =
   | CliLoad 
 
 type cli_config_t = {
-  input_file: string ;
-  verbose : bool ;
+  input_file     : string ;
+  verbose        : bool ;
+  listen_address : string ;
+  listen_port    : int ;
 }
 
 type error =
@@ -30,10 +32,10 @@ let parse_cmdline () =
 
   let usage = "Usage: " ^ Sys.argv.(0) ^ " [options...]\n\nOptions:\n"
   and speclist = [
-    ("-v"    , Set conf_verbose          , "\t\tSet somebool to true");
-    ("-i"    , Set_string conf_input_file, "FILE\tInput configuration FILE") ;
-    ("--listen"    , Set_string conf_listen_address, "FILE\tInput configuration FILE") ;
-    ("--port"    , Set_int conf_listen_port, "FILE\tInput configuration FILE") ;
+    ("-v"       , Set conf_verbose               , "\t\tSet somebool to true");
+    ("-i"       , Set_string conf_input_file     , "FILE\tInput configuration FILE") ;
+    ("--listen" , Set_string conf_listen_address , "FILE\tInput configuration FILE") ;
+    ("--port"   , Set_int conf_listen_port       , "FILE\tInput configuration FILE") ;
   ]
   and error_fn arg = raise (Bad ("Bad argument : " ^ arg)) 
   in 
@@ -43,8 +45,10 @@ let parse_cmdline () =
 
   (* Return a value *)
   { 
-    input_file = !conf_input_file ;
-    verbose    = !conf_verbose
+    input_file     = !conf_input_file ;
+    verbose        = !conf_verbose ;
+    listen_address = !conf_listen_address ;
+    listen_port    = !conf_listen_port
   }
 
 let run_cmdline config =
