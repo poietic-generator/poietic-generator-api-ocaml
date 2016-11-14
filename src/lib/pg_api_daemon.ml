@@ -43,11 +43,9 @@ let run () =
 (*   |> print_person *)
   |> print_hello
   |> print_root
-  |> App.run_command
+(*   |> App.run_command *)
 
-(*
   |> App.start
   |> Lwt_main.run 
-*)
   (* |> ignore *)
 

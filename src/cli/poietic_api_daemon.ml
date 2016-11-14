@@ -22,14 +22,18 @@ let parse_cmdline () =
   let open Arg in
 
   (* default values *)
-  let conf_verbose    = ref false
-  and conf_input_file = ref ""
+  let conf_verbose        = ref false
+  and conf_input_file     = ref ""
+  and conf_listen_address = ref ""
+  and conf_listen_port    = ref 0
   in
 
   let usage = "Usage: " ^ Sys.argv.(0) ^ " [options...]\n\nOptions:\n"
   and speclist = [
     ("-v"    , Set conf_verbose          , "\t\tSet somebool to true");
     ("-i"    , Set_string conf_input_file, "FILE\tInput configuration FILE") ;
+    ("--listen"    , Set_string conf_listen_address, "FILE\tInput configuration FILE") ;
+    ("--port"    , Set_int conf_listen_port, "FILE\tInput configuration FILE") ;
   ]
   and error_fn arg = raise (Bad ("Bad argument : " ^ arg)) 
   in 

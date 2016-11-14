@@ -55,7 +55,7 @@ let parse_cmdline () =
   and speclist = [
     ("-v"    , Set conf_verbose          ,     "\t\tSet somebool to true");
     ("-i"    , Set_string conf_input_file,     "FILE\tInput configuration FILE") ;
-    ("-a"    , Set_string conf_server_address, "URL\tAPI server URL") ;
+    ("--url"    , Set_string conf_server_address, "URL\tAPI server URL") ;
   ]
   and error_fn arg = raise (Bad ("Bad argument : " ^ arg)) 
   in 
