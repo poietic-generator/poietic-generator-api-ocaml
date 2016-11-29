@@ -87,3 +87,7 @@ let apply_stroke_list stroke_list zone =
 let to_stroke_list zone =
   []
 
+(* FIXME: not implemeted yet *)
+let to_array zone = 
+  [| |]
+

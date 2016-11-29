@@ -1,8 +1,6 @@
 (* http://caml.inria.fr/pub/docs/manual-ocaml/libref/Graphics.html *)
 (* https://github.com/mirage/ocaml-cohttp *)
 
-
-open Graphics
 open Core.Std
 
 open Lwt
@@ -71,8 +69,6 @@ let parse_cmdline () =
   }
 
 let run_cmdline config =
-  let fx = function (x,_) -> x in 
-  let fy = function (_,y) -> y in
 
   let body = Lwt_main.run body in
   print_endline ("Received body\n" ^ body) ;
