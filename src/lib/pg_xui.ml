@@ -1,28 +1,31 @@
 
-let _FIXME_WIDTH = 600 
-and _FIXME_HEIGHT = 720 
-and _FIXME_BOARD_COLUMNS = 20
+let _WINDOW_WIDTH = 600 
+and _WINDOW_HEIGHT = 720 
+and _BOARD_COLUMNS = 20
 and _FIXME_SERVER_ADDRESS = "127.0.0.1"
 and _FIXME_SERVER_PORT = 4242
 
-let _SIZEOF_BASE_MARGIN = 15
-and _SIZEOF_BASE_PIXEL = 15
+let _BASE_MARGIN = 15
+and _BASE_PIXEL = 15
 
-let _SIZEOF_SBTEXT_BOTTOM = 690
-and _SIZEOF_SBTEXT_LEFT = _SIZEOF_BASE_MARGIN
+let _SBTEXT_BOTTOM = 690
+and _SBTEXT_LEFT = _BASE_MARGIN
 
-let _SIZEOF_USERZONE_HEIGHT = (_SIZEOF_BASE_MARGIN * 2) + _FIXME_BOARD_COLUMNS * _SIZEOF_BASE_PIXEL
-and _SIZEOF_USERZONE_BOTTOM = _SIZEOF_BASE_MARGIN
-and _SIZEOF_USERZONE_LEFT = (_FIXME_WIDTH - (_FIXME_BOARD_COLUMNS * _SIZEOF_BASE_PIXEL)) / 2
+let _USERZONE_HEIGHT = (_BASE_MARGIN * 2) + _BOARD_COLUMNS * _BASE_PIXEL
+and _USERZONE_BOTTOM = _BASE_MARGIN
+and _USERZONE_LEFT = (_WINDOW_WIDTH - (_BOARD_COLUMNS * _BASE_PIXEL)) / 2
 
-let _SIZEOF_USERZONETEXT_BOTTOM = _SIZEOF_USERZONE_HEIGHT - (_SIZEOF_BASE_MARGIN * 2)
-and _SIZEOF_USERZONETEXT_LEFT = _SIZEOF_BASE_MARGIN
+let _USERZONETEXT_BOTTOM = _USERZONE_HEIGHT - (_BASE_MARGIN * 2)
+and _USERZONETEXT_LEFT = _BASE_MARGIN
 
-let _SIZEOF_USERCOLOR_HEIGHT = (_SIZEOF_BASE_MARGIN * 3)
-and _SIZEOF_USERCOLOR_BOTTOM = _SIZEOF_USERZONE_HEIGHT
+let _USERCOLOR_HEIGHT = (_BASE_MARGIN * 3)
+and _USERCOLOR_BOTTOM = _USERZONE_HEIGHT
 
-let _SIZEOF_USERCOLORTEXT_LEFT = _SIZEOF_BASE_MARGIN
-and _SIZEOF_USERCOLORTEXT_BOTTOM = _SIZEOF_USERCOLOR_BOTTOM + _SIZEOF_USERCOLOR_HEIGHT - (_SIZEOF_BASE_MARGIN * 2)
+let _USERCOLORTEXT_LEFT = _BASE_MARGIN
+and _USERCOLORTEXT_BOTTOM = _USERCOLOR_BOTTOM + _USERCOLOR_HEIGHT - (_BASE_MARGIN * 2)
+
+let _BOARD_BOTTOM = _USERCOLOR_BOTTOM + _USERCOLOR_HEIGHT
+let _BOARD_HEIGHT = 400
 
 (* screen -> zone coordonates *)
 
@@ -61,10 +64,10 @@ let draw_pixel (col,line) color =
   let open Printf in 
   let open Graphics in
   set_color color ;
-  let x = col * _SIZEOF_BASE_PIXEL + _SIZEOF_USERZONE_LEFT
-  and y = line * _SIZEOF_BASE_PIXEL + _SIZEOF_USERZONE_BOTTOM 
+  let x = col * _BASE_PIXEL + _USERZONE_LEFT
+  and y = line * _BASE_PIXEL + _USERZONE_BOTTOM 
   in
-  fill_rect (x+1) (y+1) (_SIZEOF_BASE_PIXEL-2) (_SIZEOF_BASE_PIXEL-2) ;
+  fill_rect (x+1) (y+1) (_BASE_PIXEL-2) (_BASE_PIXEL-2) ;
   ()
 
 
@@ -75,19 +78,23 @@ let repaint client_zone =
 
   (* draw background *)
   set_color black ;
-  fill_rect 0 0 _FIXME_WIDTH _FIXME_HEIGHT ;
+  fill_rect 0 0 _WINDOW_WIDTH _WINDOW_HEIGHT ;
 
   (* draw user zone *)
   set_color @@ rgb 127 127 127 ;
-  fill_rect 0 0 _FIXME_WIDTH _SIZEOF_USERZONE_HEIGHT ;
+  fill_rect 0 0 _WINDOW_WIDTH _USERZONE_HEIGHT ;
 
   (* draw user color *)
   set_color @@ rgb 63 63 63 ;
-  fill_rect 0 _SIZEOF_USERCOLOR_BOTTOM _FIXME_WIDTH _SIZEOF_USERCOLOR_HEIGHT ;
+  fill_rect 0 _USERCOLOR_BOTTOM _WINDOW_WIDTH _USERCOLOR_HEIGHT ;
   
+  (* draw board *)
+  set_color @@ rgb 127 127 127 ;
+  fill_rect 0 _BOARD_BOTTOM _WINDOW_WIDTH _BOARD_HEIGHT ;
+
   (* draw grid on user zone *)
-  for col = 0 to (_FIXME_BOARD_COLUMNS-1) do 
-    for line = 0 to (_FIXME_BOARD_COLUMNS-1) do 
+  for col = 0 to (_BOARD_COLUMNS-1) do 
+    for line = 0 to (_BOARD_COLUMNS-1) do 
       draw_pixel (col,line) black
     done
   done ;
@@ -101,7 +108,7 @@ let run () =
 
   G.open_graph "" ;
   G.set_window_title "P2Poietic XUI" ;
-  G.resize_window _FIXME_WIDTH _FIXME_HEIGHT ;
+  G.resize_window _WINDOW_WIDTH _WINDOW_HEIGHT ;
 
   (* connect to server & manage connections *)
   let client_ctx = Pg_client.create 
@@ -114,13 +121,13 @@ let run () =
   (* Fond *)
   Graphics.(
     set_color white ;
-    moveto _SIZEOF_SBTEXT_LEFT _SIZEOF_SBTEXT_BOTTOM;
+    moveto _SBTEXT_LEFT _SBTEXT_BOTTOM;
     draw_string "Session board" ;
 
-    moveto _SIZEOF_USERCOLORTEXT_LEFT _SIZEOF_USERCOLORTEXT_BOTTOM;
+    moveto _USERCOLORTEXT_LEFT _USERCOLORTEXT_BOTTOM;
     draw_string "User color" ;
 
-    moveto _SIZEOF_USERZONETEXT_LEFT _SIZEOF_USERZONETEXT_BOTTOM;
+    moveto _USERZONETEXT_LEFT _USERZONETEXT_BOTTOM;
     draw_string "User zone"
   ) ;
 
