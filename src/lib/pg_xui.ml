@@ -67,7 +67,7 @@ let default_ctx =
   
 
 let draw_pixel (col,line) color = 
-  Printf.printf "draw_pixel: (%d,%d) color" col line ;
+  (*   Printf.printf "draw_pixel: (%d,%d) color" col line ; *)
   let open Printf in 
   let open Graphics in
   set_color color ;
@@ -130,6 +130,18 @@ let repaint ~user_zone ~global_board  =
   synchronize () ;
   ()
 
+let event_handler (status:Graphics.status) = 
+  let open Printf in 
+
+  if status.button || status.keypressed then begin
+    printf "mouse_x: %d\n%!" status.mouse_x ;
+    printf "mouse_y: %d\n%!" status.mouse_y ;
+    printf "button: %s\n%!" (string_of_bool status.button) ;
+    printf "keypressed: %s\n%!" (string_of_bool status.keypressed) ;
+    printf "key: %c\n%!" status.key 
+  end ;
+  () 
+
 let run () =
   let fx = function (x,_) -> x in 
   let fy = function (_,y) -> y in
@@ -154,7 +166,7 @@ let run () =
   begin try 
       Graphics.loop_at_exit 
         [Button_down; Button_up; Key_pressed; Mouse_motion] 
-        ignore
+        event_handler
     with 
     | Graphics.Graphic_failure _ -> ()
   end ;
