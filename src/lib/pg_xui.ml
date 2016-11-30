@@ -1,6 +1,6 @@
 
 let _WINDOW_WIDTH = 600 
-and _WINDOW_HEIGHT = 720 
+and _WINDOW_HEIGHT = 705 
 and _BOARD_COLUMNS = 20
 and _FIXME_SERVER_ADDRESS = "127.0.0.1"
 and _FIXME_SERVER_PORT = 4242
@@ -24,8 +24,15 @@ and _USERCOLOR_BOTTOM = _USERZONE_HEIGHT
 let _USERCOLORTEXT_LEFT = _BASE_MARGIN
 and _USERCOLORTEXT_BOTTOM = _USERCOLOR_BOTTOM + _USERCOLOR_HEIGHT - (_BASE_MARGIN * 2)
 
-let _BOARD_BOTTOM = _USERCOLOR_BOTTOM + _USERCOLOR_HEIGHT
-let _BOARD_HEIGHT = 400
+let _BOARDPANE_BOTTOM = _USERCOLOR_BOTTOM + _USERCOLOR_HEIGHT
+and _BOARDPANE_WIDTH = _WINDOW_WIDTH
+and _BOARDPANE_HEIGHT = 400
+and _BOARDPANE_LEFT = 0
+
+let _BOARD_BOTTOM = _USERCOLOR_BOTTOM + _USERCOLOR_HEIGHT + _BASE_MARGIN
+and _BOARD_HEIGHT = _BOARD_COLUMNS * _BASE_PIXEL
+and _BOARD_WIDTH = _BOARD_COLUMNS * _BASE_PIXEL
+and _BOARD_LEFT = (_WINDOW_WIDTH - (_BOARD_COLUMNS * _BASE_PIXEL)) / 2
 
 (* screen -> zone coordonates *)
 
@@ -71,8 +78,30 @@ let draw_pixel (col,line) color =
   ()
 
 
-let repaint client_zone =
-  ignore client_zone ; (* FIXME *)
+let repaint_user_zone client_zone =
+  let open Graphics in
+
+  (* draw user zone *)
+  set_color @@ rgb 127 127 127 ;
+  fill_rect 0 0 _WINDOW_WIDTH _USERZONE_HEIGHT ;
+
+  (* draw grid on user zone *)
+  for col = 0 to (_BOARD_COLUMNS-1) do 
+    for line = 0 to (_BOARD_COLUMNS-1) do 
+      draw_pixel (col,line) black
+    done
+  done
+
+let repaint_board global_board =
+  let open Graphics in
+
+  (* draw board *)
+  set_color @@ rgb 127 127 127 ;
+  fill_rect _BOARDPANE_LEFT _BOARDPANE_BOTTOM _BOARDPANE_WIDTH _BOARDPANE_HEIGHT ;
+  set_color @@ black ;
+  fill_rect _BOARD_LEFT _BOARD_BOTTOM _BOARD_WIDTH _BOARD_HEIGHT
+
+let repaint ~user_zone ~global_board  =
   let open Printf in 
   let open Graphics in
 
@@ -80,35 +109,37 @@ let repaint client_zone =
   set_color black ;
   fill_rect 0 0 _WINDOW_WIDTH _WINDOW_HEIGHT ;
 
-  (* draw user zone *)
-  set_color @@ rgb 127 127 127 ;
-  fill_rect 0 0 _WINDOW_WIDTH _USERZONE_HEIGHT ;
+  repaint_user_zone user_zone ;
+  repaint_board global_board ; 
 
   (* draw user color *)
   set_color @@ rgb 63 63 63 ;
   fill_rect 0 _USERCOLOR_BOTTOM _WINDOW_WIDTH _USERCOLOR_HEIGHT ;
-  
-  (* draw board *)
-  set_color @@ rgb 127 127 127 ;
-  fill_rect 0 _BOARD_BOTTOM _WINDOW_WIDTH _BOARD_HEIGHT ;
 
-  (* draw grid on user zone *)
-  for col = 0 to (_BOARD_COLUMNS-1) do 
-    for line = 0 to (_BOARD_COLUMNS-1) do 
-      draw_pixel (col,line) black
-    done
-  done ;
-     
+  (* display text titles *)
+  set_color white ;
+  moveto _SBTEXT_LEFT _SBTEXT_BOTTOM;
+  draw_string "Session board" ;
+
+  moveto _USERCOLORTEXT_LEFT _USERCOLORTEXT_BOTTOM;
+  draw_string "User color" ;
+
+  moveto _USERZONETEXT_LEFT _USERZONETEXT_BOTTOM;
+  draw_string "User zone" ;
+
+  synchronize () ;
   ()
 
 let run () =
-  let module G = Graphics in
   let fx = function (x,_) -> x in 
   let fy = function (_,y) -> y in
 
-  G.open_graph "" ;
-  G.set_window_title "P2Poietic XUI" ;
-  G.resize_window _WINDOW_WIDTH _WINDOW_HEIGHT ;
+  Graphics.(
+    open_graph "" ;
+    set_window_title "P2Poietic XUI" ;
+    resize_window _WINDOW_WIDTH _WINDOW_HEIGHT ;
+    auto_synchronize false
+  ) ;
 
   (* connect to server & manage connections *)
   let client_ctx = Pg_client.create 
@@ -116,25 +147,16 @@ let run () =
       ~server_port:_FIXME_SERVER_PORT 
   in
   
-  repaint client_ctx.zone ;
+  repaint ~user_zone:client_ctx.zone ~global_board:client_ctx ;
 
   (* Fond *)
-  Graphics.(
-    set_color white ;
-    moveto _SBTEXT_LEFT _SBTEXT_BOTTOM;
-    draw_string "Session board" ;
-
-    moveto _USERCOLORTEXT_LEFT _USERCOLORTEXT_BOTTOM;
-    draw_string "User color" ;
-
-    moveto _USERZONETEXT_LEFT _USERZONETEXT_BOTTOM;
-    draw_string "User zone"
-  ) ;
 
   begin try 
-  G.loop_at_exit [Button_down; Button_up; Key_pressed; Mouse_motion] ignore
-  with 
-  | Graphics.Graphic_failure _ -> ()
+      Graphics.loop_at_exit 
+        [Button_down; Button_up; Key_pressed; Mouse_motion] 
+        ignore
+    with 
+    | Graphics.Graphic_failure _ -> ()
   end ;
   ()
 
