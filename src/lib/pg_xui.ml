@@ -38,6 +38,16 @@ and _BOARD_LEFT = (_WINDOW_WIDTH - (_BOARD_COLUMNS * _BASE_PIXEL)) / 2
 
 (* zone to screen coordinates *)
 
+(* XUI context *)
+type t = {
+  board       : Pg_board.t ;
+  viewer      : Pg_xui_viewer.t ;
+  editor      : Pg_xui_editor.t ;
+  colorpicker : Pg_xui_colorpicker.t ;
+  chat        : Pg_xui_chat.t ;
+}
+
+
 let default_ctx = 
   let b = Graphics.black 
   and w = Graphics.white 
@@ -78,7 +88,7 @@ let draw_pixel (col,line) color =
   ()
 
 
-let repaint_user_zone client_zone =
+let repaint_user_zone client_zone ctx =
   let open Graphics in
 
   (* draw user zone *)
@@ -92,6 +102,7 @@ let repaint_user_zone client_zone =
     done
   done
 
+
 let repaint_board global_board =
   let open Graphics in
 
@@ -101,7 +112,8 @@ let repaint_board global_board =
   set_color @@ black ;
   fill_rect _BOARD_LEFT _BOARD_BOTTOM _BOARD_WIDTH _BOARD_HEIGHT
 
-let repaint ~user_zone ~global_board  =
+
+let repaint ~user_zone ~global_board ctx =
   let open Printf in 
   let open Graphics in
 
@@ -109,8 +121,13 @@ let repaint ~user_zone ~global_board  =
   set_color black ;
   fill_rect 0 0 _WINDOW_WIDTH _WINDOW_HEIGHT ;
 
-  repaint_user_zone user_zone ;
-  repaint_board global_board ; 
+  Pg_xui_editor.repaint ctx.editor ;
+  Pg_xui_viewer.repaint ctx.viewer ;
+
+  (* FIXME
+     repaint_user_zone user_zone ;
+     repaint_board global_board ; 
+  *)
 
   (* draw user color *)
   set_color @@ rgb 63 63 63 ;
@@ -130,7 +147,8 @@ let repaint ~user_zone ~global_board  =
   synchronize () ;
   ()
 
-let event_handler (status:Graphics.status) = 
+
+let event_handler ctx (status:Graphics.status) = 
   let open Printf in 
 
   if status.button || status.keypressed then begin
@@ -141,6 +159,7 @@ let event_handler (status:Graphics.status) =
     printf "key: %c\n%!" status.key 
   end ;
   () 
+
 
 let run () =
   let fx = function (x,_) -> x in 
@@ -166,7 +185,7 @@ let run () =
   begin try 
       Graphics.loop_at_exit 
         [Button_down; Button_up; Key_pressed; Mouse_motion] 
-        event_handler
+        (fun status -> event_handler ctx status)
     with 
     | Graphics.Graphic_failure _ -> ()
   end ;
